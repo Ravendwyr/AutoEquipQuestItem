@@ -1,0 +1,10 @@
+## Interface: 40000
+
+## Title: AutoEquipQuestItem
+## Notes: Adds a button to the quest completion interface which allows you to auto equips selected quest Item after completion
+## Author: Yssaril
+## Version: @project-version@
+
+widgets\widgets.xml
+
+Core.lua
