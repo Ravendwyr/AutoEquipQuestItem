@@ -1,7 +1,7 @@
 ## Interface: 40000
 
 ## Title: AutoEquipQuestItem
-## Notes: Adds a button to the quest completion interface which allows you to auto equips selected quest Item after completion
+## Notes: Adds a button to the quest completion interface which allows you to auto equips selected quest Item after completion (Original idea by: Detrel)
 ## Author: Yssaril
 ## Version: @project-version@
 
