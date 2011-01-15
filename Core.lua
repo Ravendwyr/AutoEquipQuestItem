@@ -18,7 +18,7 @@ AEQI.itemequip = {}
 
 local function addAllRewardsToQueue()
 	for i=1,GetNumQuestRewards() do
-		if select(5, GetQuestItemInfo("reward", i and IsEquippableItem(GetQuestItemLink("reward", i)) then
+		if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
 			AEQI.itemequip[tonumber(GetQuestItemLink("reward", i):match("item:(%d+)"))] = true
 		end
 	end
@@ -46,7 +46,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 		if IsShiftKeyDown() and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			for i=1,GetNumQuestRewards() do
 				if select(5, GetQuestItemInfo("reward", i)) then
-					button:SetText(self.buttonStrings[3])
+					button:SetText(AEQI.buttonStrings[3])
 					break
 				end
 			end
@@ -55,9 +55,9 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 	button:SetScript("OnKeyUp", function(...)
 		if not IsShiftKeyDown() then
 			if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-				button:SetText(self.buttonStrings[2])
+				button:SetText(AEQI.buttonStrings[2])
 			else
-				button:SetText(self.buttonStrings[1])
+				button:SetText(AEQI.buttonStrings[1])
 			end
 		end
 	end)
