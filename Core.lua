@@ -80,9 +80,9 @@ function QuestInfoItem_OnClick(self, ...)
 	if ( self.type == "choice" ) then
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			button:Show()
-			button:SetText(self.buttonStrings[2])
+			button:SetText(AEQI.buttonStrings[2])
 		else
-			self:QUEST_COMPLETE()
+			AEQI:QUEST_COMPLETE()
 		end
 	end
 end
