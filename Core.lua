@@ -32,7 +32,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 	button:EnableKeyboard(true)
 	button:SetScript("OnClick", function(...)
 		AEQI:RegisterEvent("BAG_UPDATE")
-		if select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			AEQI.itemequip[tonumber(GetQuestItemLink("choice", QuestInfoFrame.itemChoice):match("item:(%d+)"))] = true
 			if IsShiftKeyDown() then
 				addAllRewardsToQueue()
