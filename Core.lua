@@ -4,6 +4,7 @@ AEQI.buttonStrings = {
 	[1] = "Complete Quest & Equip Item",
 	[2] = "Complete & Equip Selected Item",
 	[3] = "Complete & Equip All Items",
+	[4] = "Complete & Get Highest Value",
 }
 
 --_G['AEQI'] = AEQI --debug code
@@ -37,6 +38,17 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 			if IsShiftKeyDown() then
 				addAllRewardsToQueue()
 			end
+		elseif GetNumQuestChoices() > 0 then
+			local slot, val = 0,0
+			for i=1,GetNumQuestChoices() do
+				local _, _, _, _, _, _, _, _, _, _, tempVal = GetItemInfo(GetQuestItemLink("choice", i))
+				print(tempVal)
+				if tempVal > val then
+					slot = i
+					val = tempVal
+				end
+			end
+			QuestInfoFrame.itemChoice = slot
 		else
 			addAllRewardsToQueue()
 		end
@@ -72,6 +84,12 @@ function AEQI:QUEST_COMPLETE()
 			break
 		end
 	end
+	if not button:IsShown() then
+		if GetNumQuestChoices() > 1 then
+			button:Show()
+			button:SetText(self.buttonStrings[4])
+		end
+	end
 end
 
 local QuestInfoItem_OnClick_old = QuestInfoItem_OnClick
@@ -81,6 +99,8 @@ function QuestInfoItem_OnClick(self, ...)
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			button:Show()
 			button:SetText(AEQI.buttonStrings[2])
+		--elseif QuestInfoFrame.itemChoice > 0 then
+		--	button:Hide()
 		else
 			AEQI:QUEST_COMPLETE()
 		end
