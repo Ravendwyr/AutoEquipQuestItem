@@ -42,7 +42,6 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 			local slot, val = 0,0
 			for i=1,GetNumQuestChoices() do
 				local _, _, _, _, _, _, _, _, _, _, tempVal = GetItemInfo(GetQuestItemLink("choice", i))
-				print(tempVal)
 				if tempVal > val then
 					slot = i
 					val = tempVal
