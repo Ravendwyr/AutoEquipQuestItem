@@ -3,8 +3,8 @@ local _, AEQI = ...
 AEQI.buttonStrings = {
 	[1] = "Complete Quest & Equip Item",
 	[2] = "Complete & Equip Selected Item",
-	[3] = "Complete & Equip All Items",
-	[4] = "Complete & Get Highest Value",
+	[3] = YELLOW_FONT_COLOR_CODE.."Complete & Equip All Items"..FONT_COLOR_CODE_CLOSE,
+	[4] = ORANGE_FONT_COLOR_CODE.."Complete & Get Highest Value"..FONT_COLOR_CODE_CLOSE,
 }
 
 --_G['AEQI'] = AEQI --debug code
