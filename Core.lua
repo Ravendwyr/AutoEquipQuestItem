@@ -30,7 +30,6 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 	button:SetPoint("TOP", QuestFrameCompleteQuestButton, "TOP")
 	button:SetWidth(200)
 	button:SetText("Complete Quest & Equip Item")
-	button:EnableKeyboard(true)
 	button:SetScript("OnClick", function(...)
 		AEQI:RegisterEvent("BAG_UPDATE")
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
@@ -53,18 +52,15 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 		end
 		QuestRewardCompleteButton_OnClick()
 	end)
-	button:SetScript("OnKeyDown", function(...)
-		if IsShiftKeyDown() and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+	button:SetScript("OnEvent", function(self, event, key, state) -- dont need a formal event handler since we only track one event
+		if (state == 1) and IsShiftKeyDown() and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			for i=1,GetNumQuestRewards() do
 				if select(5, GetQuestItemInfo("reward", i)) then
 					button:SetText(AEQI.buttonStrings[3])
 					break
 				end
 			end
-		end
-	end)
-	button:SetScript("OnKeyUp", function(...)
-		if not IsShiftKeyDown() then
+		elseif not IsShiftKeyDown() then
 			if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 				button:SetText(AEQI.buttonStrings[2])
 			else
@@ -72,6 +68,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 			end
 		end
 	end)
+	button:RegisterEvent("MODIFIER_STATE_CHANGED")
 AEQI.button = button
 
 function AEQI:QUEST_COMPLETE()
