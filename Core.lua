@@ -30,7 +30,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 	button:SetPoint("TOP", QuestFrameCompleteQuestButton, "TOP")
 	button:SetWidth(200)
 	button:SetText("Complete Quest & Equip Item")
-	button:SetScript("OnClick", function(...)
+	button:SetScript("OnClick", function(self, ...)
 		AEQI:RegisterEvent("BAG_UPDATE")
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			AEQI.itemequip[tonumber(GetQuestItemLink("choice", QuestInfoFrame.itemChoice):match("item:(%d+)"))] = true
@@ -53,18 +53,20 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 		QuestRewardCompleteButton_OnClick()
 	end)
 	button:SetScript("OnEvent", function(self, event, key, state) -- dont need a formal event handler since we only track one event
-		if (state == 1) and IsShiftKeyDown() and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-			for i=1,GetNumQuestRewards() do
-				if select(5, GetQuestItemInfo("reward", i)) then
-					button:SetText(AEQI.buttonStrings[3])
-					break
+		if self:IsVisible() then
+			if (state == 1) and IsShiftKeyDown() and QuestInfoFrame.itemChoice and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+				for i=1,GetNumQuestRewards() do
+					if select(5, GetQuestItemInfo("reward", i)) then
+						button:SetText(AEQI.buttonStrings[3])
+						break
+					end
 				end
-			end
-		elseif not IsShiftKeyDown() then
-			if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-				button:SetText(AEQI.buttonStrings[2])
-			else
-				button:SetText(AEQI.buttonStrings[1])
+			elseif not IsShiftKeyDown() then
+				if QuestInfoFrame.itemChoice and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+					button:SetText(AEQI.buttonStrings[2])
+				else
+					button:SetText(AEQI.buttonStrings[1])
+				end
 			end
 		end
 	end)
