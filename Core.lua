@@ -46,7 +46,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 					val = tempVal
 				end
 			end
-			QuestInfoFrame.itemChoice = slot
+			QuestInfoFrame.itemChoice = slot ~= 0 and slot or 1
 		else
 			addAllRewardsToQueue()
 		end
