@@ -153,12 +153,12 @@ function AEQI:PLAYER_REGEN_ENABLED()
 	local equiped
 	for bagID=0, NUM_BAG_SLOTS do
 		for slot=1, GetContainerNumSlots(bagID) do
-			local item = GetContainerItemLink(bagID, slot):match("item:(%d+)")
-			if self.itemequip[item] then
+			local link = GetContainerItemLink(bagID, slot) or ""
+			if link and self.itemequip[tonumber(link:match("item:(%d+)"))] then
 				local invSlot = self:BestSlot(bagID,slot)
 				PickupContainerItem(bagID, slot)
 				PickupInventoryItem(invSlot)
-				self.itemequip[item] = nil
+				self.itemequip[tonumber(link:match("item:(%d+)"))] = nil
 			end
 			if not next(self.itemequip) then
 				self:UnregisterEvent("BAG_UPDATE") -- just in case a borderline case happens when combat ends right as the bags update
