@@ -37,7 +37,7 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 			if IsShiftKeyDown() then
 				addAllRewardsToQueue()
 			end
-		elseif GetNumQuestChoices() > 0 then
+		elseif GetNumQuestChoices() > 1 then
 			local slot, val = 0,0
 			for i=1,GetNumQuestChoices() do
 				local _, _, _, _, _, _, _, _, _, _, tempVal = GetItemInfo(GetQuestItemLink("choice", i))
@@ -47,6 +47,8 @@ local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
 				end
 			end
 			QuestInfoFrame.itemChoice = slot ~= 0 and slot or 1
+		elseif GetNumQuestChoices() == 1 then
+			AEQI.itemequip[tonumber(GetQuestItemLink("choice", 1):match("item:(%d+)"))] = true
 		else
 			addAllRewardsToQueue()
 		end
@@ -86,6 +88,12 @@ function AEQI:QUEST_COMPLETE()
 		if GetNumQuestChoices() > 1 then
 			button:Show()
 			button:SetText(self.buttonStrings[4])
+		end
+	end
+	if not button:IsShown() then
+		if GetNumQuestChoices() == 1 then
+			button:Show()
+			button:SetText(self.buttonStrings[1])
 		end
 	end
 end
