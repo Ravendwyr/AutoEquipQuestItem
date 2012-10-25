@@ -59,7 +59,7 @@ local function Constructor()
 	button:SetScript("OnEnable", OnEnable)
 	button:SetScript("OnMouseDown", OnMouseDown)
 	button:SetScript("OnMouseUp", OnMouseUp)
-	button:SetHighlightTexture("UIPanelButtonHighlightTexture")
+	button:SetHighlightTexture([[Interface\Buttons\UI-Panel-Button-Highlight]])
 	
 	button:SetNormalFontObject("GameFontNormal")
 	button:SetHighlightFontObject("GameFontHighlight")
