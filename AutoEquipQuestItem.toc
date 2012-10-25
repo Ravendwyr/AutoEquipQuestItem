@@ -5,6 +5,4 @@
 ## Author: Yssaril
 ## Version: @project-version@
 
-widgets\widgets.xml
-
 Core.lua

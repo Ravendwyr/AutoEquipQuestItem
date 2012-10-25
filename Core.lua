@@ -25,7 +25,8 @@ local function addAllRewardsToQueue()
 	end
 end
 
-local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
+-- local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
+local button = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
 	button:SetPoint("LEFT", QuestFrameCompleteQuestButton, "RIGHT", 5, 0)
 	button:SetPoint("TOP", QuestFrameCompleteQuestButton, "TOP")
 	button:SetWidth(200)
