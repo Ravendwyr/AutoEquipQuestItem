@@ -29,8 +29,8 @@ local function Constructor()
 	local button = CreateFrame("Button", nil, UIParent)
 	button:SetWidth(40)
 	button:SetHeight(22)
-	
-	
+
+
 	local bgLeft = button:CreateTexture(nil, "BACKGROUND")
 		bgLeft:SetWidth(12)
 		bgLeft:SetPoint("TOPLEFT")
@@ -38,7 +38,7 @@ local function Constructor()
 		bgLeft:SetTexture([[Interface\Buttons\UI-Panel-Button-Up]])
 		bgLeft:SetTexCoord(0, 0.09375, 0, 0.6875)
 	button.bgLeft = bgLeft
-	
+
 	local bgRight = button:CreateTexture(nil, "BACKGROUND")
 		bgRight:SetWidth(12)
 		bgRight:SetPoint("TOPRIGHT")
@@ -46,7 +46,7 @@ local function Constructor()
 		bgRight:SetTexture([[Interface\Buttons\UI-Panel-Button-Up]])
 		bgRight:SetTexCoord(0.53125, 0.625, 0, 0.6875)
 	button.bgRight = bgRight
-	
+
 	local bgMiddle = button:CreateTexture(nil, "BACKGROUND")
 		bgMiddle:SetWidth(12)
 		bgMiddle:SetPoint("TOPLEFT", bgLeft, "TOPRIGHT")
@@ -54,17 +54,17 @@ local function Constructor()
 		bgMiddle:SetTexture([[Interface\Buttons\UI-Panel-Button-Up]])
 		bgMiddle:SetTexCoord(0.09375, 0.53125, 0, 0.6875)
 	button.bgMiddle = bgMiddle
-	
+
 	button:SetScript("OnDisable", OnDisable)
 	button:SetScript("OnEnable", OnEnable)
 	button:SetScript("OnMouseDown", OnMouseDown)
 	button:SetScript("OnMouseUp", OnMouseUp)
 	button:SetHighlightTexture([[Interface\Buttons\UI-Panel-Button-Highlight]])
-	
+
 	button:SetNormalFontObject("GameFontNormal")
 	button:SetHighlightFontObject("GameFontHighlight")
 	button:SetDisabledFontObject("GameFontDisable")
-	
+
 	return button
 end
 
