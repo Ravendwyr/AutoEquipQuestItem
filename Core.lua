@@ -80,7 +80,7 @@ function AEQI:QUEST_COMPLETE()
 	local numChoices = GetNumQuestChoices()
 	local numRewards = GetNumQuestRewards()
 
-	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
+--	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
 
 	button:Hide()
 
