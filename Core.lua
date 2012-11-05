@@ -77,24 +77,36 @@ local button = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonT
 AEQI.button = button
 
 function AEQI:QUEST_COMPLETE()
+	local numChoices = GetNumQuestChoices()
+	local numRewards = GetNumQuestRewards()
+
+	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
+
 	button:Hide()
-	for i=1,GetNumQuestRewards() do
+
+	for i=1, numRewards do
 		if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
 			button:Show()
 			button:SetText(self.buttonStrings[1])
 			break
 		end
 	end
+
+	-- pre-MoP "choose your reward" quest
 	if not button:IsShown() then
-		if GetNumQuestChoices() > 1 then
+		if numChoices > 1 then
 			button:Show()
 			button:SetText(self.buttonStrings[4])
 		end
 	end
+
+	-- MoP "dynamic reward" quest
 	if not button:IsShown() then
-		if GetNumQuestChoices() == 1 then
-			button:Show()
-			button:SetText(self.buttonStrings[1])
+		if numChoices == 1 then
+			if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
+				button:Show()
+				button:SetText(self.buttonStrings[1])
+			end
 		end
 	end
 end
