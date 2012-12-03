@@ -84,28 +84,28 @@ function AEQI:QUEST_COMPLETE()
 
 	button:Hide()
 
-	for i=1, numRewards do
-		if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
-			button:Show()
-			button:SetText(self.buttonStrings[1])
-			break
-		end
-	end
+	if numChoices == 0 and numRewards == 0 then return end -- nothing of value, bail out
 
 	-- pre-MoP "choose your reward" quest
-	if not button:IsShown() then
-		if numChoices > 1 then
-			button:Show()
-			button:SetText(self.buttonStrings[4])
-		end
-	end
+	if numChoices > 1 then
+		button:SetText(self.buttonStrings[4])
+		button:Show()
 
 	-- MoP "dynamic reward" quest
-	if not button:IsShown() then
-		if numChoices == 1 then
-			if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
-				button:Show()
+	elseif numChoices == 1 then
+		if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
+			button:SetText(self.buttonStrings[1])
+			button:Show()
+		end
+
+	-- rather rare "multiple guaranteed rewards" quest
+	elseif numRewards > 0 then
+		for i=1, numRewards do
+			if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
 				button:SetText(self.buttonStrings[1])
+				button:Show()
+
+				break
 			end
 		end
 	end
