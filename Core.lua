@@ -1,196 +1,198 @@
-local _, AEQI = ...
 
-AEQI.buttonStrings = {
-	[1] = "Complete Quest & Equip Item",
-	[2] = "Complete & Equip Selected Item",
-	[3] = YELLOW_FONT_COLOR_CODE.."Complete & Equip All Items"..FONT_COLOR_CODE_CLOSE,
-	[4] = ORANGE_FONT_COLOR_CODE.."Complete & Get Highest Value"..FONT_COLOR_CODE_CLOSE,
-}
+local AEQI = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
 
---_G['AEQI'] = AEQI --debug code
-AEQI.eventframe = CreateFrame('frame')
-AEQI.eventframe:SetScript("OnEvent", function(self, event, ...) if AEQI[event] then return AEQI[event](AEQI, event, ...) end end)
-function AEQI:RegisterEvent(...) return AEQI.eventframe:RegisterEvent(...) end
-function AEQI:UnregisterEvent(...) return AEQI.eventframe:UnregisterEvent(...) end
-
-AEQI:RegisterEvent("QUEST_COMPLETE")
-
-AEQI.itemequip = {}
-
+local itemsToEquip = {}
 local function addAllRewardsToQueue()
-	for i=1,GetNumQuestRewards() do
+	for i=1, GetNumQuestRewards() do
 		if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
-			AEQI.itemequip[tonumber(GetQuestItemLink("reward", i):match("item:(%d+)"))] = true
+			itemsToEquip[tonumber(GetQuestItemLink("reward", i):match("item:(%d+)"))] = true
 		end
 	end
 end
 
--- local button = AEQI:GetWidget("button", QuestFrameRewardPanel)
-local button = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
-	button:SetPoint("LEFT", QuestFrameCompleteQuestButton, "RIGHT", 5, 0)
-	button:SetPoint("TOP", QuestFrameCompleteQuestButton, "TOP")
-	button:SetWidth(200)
-	button:SetText("Complete Quest & Equip Item")
-	button:SetScript("OnClick", function(self, ...)
-		AEQI:RegisterEvent("BAG_UPDATE")
-		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-			AEQI.itemequip[tonumber(GetQuestItemLink("choice", QuestInfoFrame.itemChoice):match("item:(%d+)"))] = true
-			if IsShiftKeyDown() then
-				addAllRewardsToQueue()
-			end
-		elseif GetNumQuestChoices() > 1 then
-			local slot, val = 0,0
-			for i=1,GetNumQuestChoices() do
-				local _, _, _, _, _, _, _, _, _, _, tempVal = GetItemInfo(GetQuestItemLink("choice", i))
-				if tempVal > val then
-					slot = i
-					val = tempVal
-				end
-			end
-			QuestInfoFrame.itemChoice = slot ~= 0 and slot or 1
-		elseif GetNumQuestChoices() == 1 then
-			AEQI.itemequip[tonumber(GetQuestItemLink("choice", 1):match("item:(%d+)"))] = true
-		else
+
+local COMPLETE_AND_EQUIP = "Complete Quest & Equip Item"
+local COMPLETE_AND_EQUIP_SELECTED = "Complete & Equip Selected Item"
+local COMPLETE_AND_EQUIP_ALL = "Complete & Equip All Items"
+local COMPLETE_AND_GET_HIGHEST = "Complete & Get Highest Value"
+
+
+AEQI:SetPoint("LEFT", QuestFrameCompleteQuestButton, "RIGHT", 5, 0)
+AEQI:SetPoint("TOP", QuestFrameCompleteQuestButton, "TOP")
+AEQI:SetWidth(200)
+AEQI:SetText(COMPLETE_AND_EQUIP)
+AEQI:SetScript("OnClick", function(self, ...)
+	self:RegisterEvent("BAG_UPDATE")
+
+	if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+		itemsToEquip[tonumber(GetQuestItemLink("choice", QuestInfoFrame.itemChoice):match("item:(%d+)"))] = true
+
+		if IsShiftKeyDown() then
 			addAllRewardsToQueue()
 		end
-		QuestRewardCompleteButton_OnClick()
-	end)
-	button:SetScript("OnEvent", function(self, event, key, state) -- dont need a formal event handler since we only track one event
-		if self:IsVisible() then
-			if (state == 1) and IsShiftKeyDown() and QuestInfoFrame.itemChoice and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-				for i=1,GetNumQuestRewards() do
-					if select(5, GetQuestItemInfo("reward", i)) then
-						button:SetText(AEQI.buttonStrings[3])
-						break
-					end
-				end
-			elseif not IsShiftKeyDown() then
-				if QuestInfoFrame.itemChoice and QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-					button:SetText(AEQI.buttonStrings[2])
-				else
-					button:SetText(AEQI.buttonStrings[1])
-				end
+	elseif GetNumQuestChoices() > 1 then
+		local slot, val = 0, 0
+
+		for i=1, GetNumQuestChoices() do
+			local _, _, _, _, _, _, _, _, _, _, tempVal = GetItemInfo(GetQuestItemLink("choice", i))
+
+			if tempVal > val then
+				slot = i
+				val = tempVal
 			end
 		end
-	end)
-	button:RegisterEvent("MODIFIER_STATE_CHANGED")
-AEQI.button = button
 
-function AEQI:QUEST_COMPLETE()
-	local numChoices = GetNumQuestChoices()
-	local numRewards = GetNumQuestRewards()
+		QuestInfoFrame.itemChoice = slot ~= 0 and slot or 1
 
---	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
-
-	button:Hide()
-
-	if numChoices == 0 and numRewards == 0 then return end -- nothing of value, bail out
-
-	-- pre-MoP "choose your reward" quest
-	if numChoices > 1 then
-		button:SetText(self.buttonStrings[4])
-		button:Show()
-
-	-- MoP "dynamic reward" quest
-	elseif numChoices == 1 then
-		if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
-			button:SetText(self.buttonStrings[1])
-			button:Show()
-		end
-
-	-- rather rare "multiple guaranteed rewards" quest
-	elseif numRewards > 0 then
-		for i=1, numRewards do
-			if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
-				button:SetText(self.buttonStrings[1])
-				button:Show()
-
-				break
-			end
-		end
+	elseif GetNumQuestChoices() == 1 then
+		itemsToEquip[tonumber(GetQuestItemLink("choice", 1):match("item:(%d+)"))] = true
+	else
+		addAllRewardsToQueue()
 	end
-end
 
-local QuestInfoItem_OnClick_old = QuestInfoItem_OnClick
+	QuestRewardCompleteButton_OnClick()
+end)
+
+
+local orig_QuestInfoItem_OnClick = QuestInfoItem_OnClick
 function QuestInfoItem_OnClick(self, ...)
-	QuestInfoItem_OnClick_old(self, ...)
-	if ( self.type == "choice" ) then
+	orig_QuestInfoItem_OnClick(self, ...)
+
+	if self.type == "choice" then
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
-			button:Show()
-			button:SetText(AEQI.buttonStrings[2])
-		--elseif QuestInfoFrame.itemChoice > 0 then
-		--	button:Hide()
+			AEQI:Show()
+			AEQI:SetText(COMPLETE_AND_EQUIP_SELECTED)
+--		elseif QuestInfoFrame.itemChoice > 0 then
+--			AEQI:Hide()
 		else
 			AEQI:QUEST_COMPLETE()
 		end
 	end
 end
 
-function AEQI:BestSlot(bagID,slot)
+
+function AEQI:GetBestBagSlot(bagID, slot)
 	local invSlot, invLevel
+
 	PickupContainerItem(bagID, slot)
-	for i=0,23 do
+
+	for i = 0, 23 do
 		if CursorCanGoInSlot(i) then
 			local level = GetInventoryItemLink("player", i) and select(4, GetItemInfo(GetInventoryItemLink("player", i))) or 0
-			if (not invSlot or invLevel > level) then
+
+			if not invSlot or invLevel > level then
 				invSlot = i
 				invLevel = level
 			end
 		end
 	end
+
 	ClearCursor()
+
 	return invSlot
 end
 
-function AEQI:BAG_UPDATE()
-	if not InCombatLockdown() then
-		local equiped
-		for bagID=0, NUM_BAG_SLOTS do
-			for slot=1, GetContainerNumSlots(bagID) do
-				local link = GetContainerItemLink(bagID, slot) or ""
-				if link and self.itemequip[tonumber(link:match("item:(%d+)"))] then
-					local invSlot = self:BestSlot(bagID,slot)
-					PickupContainerItem(bagID, slot)
-					PickupInventoryItem(invSlot)
-					self.itemequip[tonumber(link:match("item:(%d+)"))] = nil
-				end
-				if not next(self.itemequip) then
-					self:UnregisterEvent("BAG_UPDATE")
-					equiped = true
-					break
-				end
-			end
-			if equiped then
+
+-- Event Functions
+function AEQI:QUEST_COMPLETE()
+	local numChoices = GetNumQuestChoices()
+	local numRewards = GetNumQuestRewards()
+
+--	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
+
+	self:Hide()
+
+	if numChoices == 0 and numRewards == 0 then return end -- nothing of value, bail out
+
+	-- pre-5.0 "choose your reward" quest
+	if numChoices > 1 then
+		self:SetText(COMPLETE_AND_GET_HIGHEST)
+		self:Show()
+
+	-- post-5.0 "dynamic reward" quest
+	elseif numChoices == 1 then
+		if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
+			self:SetText(COMPLETE_AND_EQUIP)
+			self:Show()
+		end
+
+	-- rather rare "multiple guaranteed rewards" quest
+	elseif numRewards > 0 then
+		for i = 1, numRewards do
+			if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
+				self:SetText(COMPLETE_AND_EQUIP)
+				self:Show()
+
 				break
 			end
 		end
-		ClearCursor()
-	else
-		self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	end
 end
 
 function AEQI:PLAYER_REGEN_ENABLED()
-	local equiped
-	for bagID=0, NUM_BAG_SLOTS do
-		for slot=1, GetContainerNumSlots(bagID) do
+	local equipped = false
+
+	for bagID = 0, NUM_BAG_SLOTS do
+		for slot = 1, GetContainerNumSlots(bagID) do
 			local link = GetContainerItemLink(bagID, slot) or ""
-			if link and self.itemequip[tonumber(link:match("item:(%d+)"))] then
-				local invSlot = self:BestSlot(bagID,slot)
+			local itemID = tonumber(link:match("item:(%d+)"))
+
+			if link and itemsToEquip[itemID] then
+				local invSlot = self:GetBestBagSlot(bagID, slot)
+
 				PickupContainerItem(bagID, slot)
 				PickupInventoryItem(invSlot)
-				self.itemequip[tonumber(link:match("item:(%d+)"))] = nil
+
+				itemsToEquip[itemID] = nil
 			end
-			if not next(self.itemequip) then
-				self:UnregisterEvent("BAG_UPDATE") -- just in case a borderline case happens when combat ends right as the bags update
-				equiped = true
+
+			if not next(itemsToEquip) then
+				self:UnregisterEvent("BAG_UPDATE") -- just in case combat ends right as the bags update
+				equipped = true
+
 				break
 			end
 		end
-		if equiped then
+
+		if equipped then
 			break
 		end
 	end
+
 	ClearCursor()
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED") -- only run this once
+
+	self:UnregisterEvent("PLAYER_REGEN_ENABLED") -- don't need it until next time
 end
+
+function AEQI:BAG_UPDATE()
+	if InCombatLockdown() then self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	else self:PLAYER_REGEN_ENABLED() end
+end
+
+function AEQI:MODIFIER_STATE_CHANGED()
+	if not self:IsVisible() then return end
+
+	if IsShiftKeyDown() then
+		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+			for i=1, GetNumQuestRewards() do
+				if select(5, GetQuestItemInfo("reward", i)) then
+					self:SetText(COMPLETE_AND_EQUIP_ALL)
+					break
+				end
+			end
+		end
+	else
+		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
+			self:SetText(COMPLETE_AND_EQUIP_SELECTED)
+		else
+			self:SetText(COMPLETE_AND_EQUIP)
+		end
+	end
+end
+
+
+AEQI:RegisterEvent("QUEST_COMPLETE")
+AEQI:RegisterEvent("MODIFIER_STATE_CHANGED")
+AEQI:SetScript("OnEvent", function(self, event, ...)
+	if self[event] then self[event](self, event, ...) end
+end)
