@@ -185,7 +185,7 @@ function AEQI:MODIFIER_STATE_CHANGED()
 		if QuestInfoFrame.itemChoice > 0 and select(5, GetQuestItemInfo("choice", QuestInfoFrame.itemChoice)) and IsEquippableItem(GetQuestItemLink("choice", QuestInfoFrame.itemChoice)) then
 			self:SetText(COMPLETE_AND_EQUIP_SELECTED)
 		else
-			self:SetText(COMPLETE_AND_EQUIP)
+			self:SetText(COMPLETE_AND_GET_HIGHEST)
 		end
 	end
 end
