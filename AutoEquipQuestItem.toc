@@ -1,6 +1,6 @@
-## Interface: 50200
-## Title: AutoEquipQuestItem
-## Notes: Adds a button to the quest completion interface which allows you to auto equips selected quest Item after completion (Original idea by: Detrel)
+## Interface: 50300
+## Title: Auto Equip Quest Item
+## Notes: Adds a button to the quest completion interface which allows you to auto equip the selected quest reward.
 ## Author: Yssaril
 ## Version: @project-version@
 
