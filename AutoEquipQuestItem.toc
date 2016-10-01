@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: Auto Equip Quest Item
 ## Notes: Adds a button to the quest completion interface which allows you to auto equip the selected quest reward.
 ## Author: Yssaril
