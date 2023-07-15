@@ -1,7 +1,8 @@
-## Interface: 70000
+## Interface: 100105
 ## Title: Auto Equip Quest Item
 ## Notes: Adds a button to the quest completion interface which allows you to auto equip the selected quest reward.
 ## Author: Yssaril
+## IconTexture: Interface\PaperDollInfoFrame\UI-GearManager-ItemIntoBag
 ## Version: @project-version@
 ## X-Category: Quests & Leveling
 ## X-Curse-Project-ID: 28517

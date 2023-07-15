@@ -1,4 +1,8 @@
 
+local GetContainerNumSlots = C_Container.GetContainerNumSlots
+local GetContainerItemLink = C_Container.GetContainerItemLink
+local PickupContainerItem  = C_Container.PickupContainerItem
+
 local AEQI = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
 
 local itemsToEquip = {}
