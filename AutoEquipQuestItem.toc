@@ -3,5 +3,8 @@
 ## Notes: Adds a button to the quest completion interface which allows you to auto equip the selected quest reward.
 ## Author: Yssaril
 ## Version: @project-version@
+## X-Category: Quests & Leveling
+## X-Curse-Project-ID: 28517
+## X-Wago-ID: E6gLvqK1
 
 Core.lua
