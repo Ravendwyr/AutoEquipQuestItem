@@ -1,0 +1,8 @@
+{
+    "Lua.diagnostics.globals": [
+        "QuestFrameCompleteQuestButton",
+        "QuestFrameRewardPanel",
+        "QuestRewardCompleteButton_OnClick",
+        "QuestInfoFrame"
+    ]
+}
