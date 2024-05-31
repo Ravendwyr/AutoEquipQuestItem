@@ -1,4 +1,4 @@
-## Interface: 100105
+## Interface: 11502, 100207, 40400
 ## Title: Auto Equip Quest Item
 ## Notes: Adds a button to the quest completion interface which allows you to auto equip the selected quest reward.
 ## Author: Yssaril

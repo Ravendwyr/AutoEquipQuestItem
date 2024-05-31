@@ -2,6 +2,15 @@
 local GetContainerNumSlots = C_Container.GetContainerNumSlots
 local GetContainerItemLink = C_Container.GetContainerItemLink
 local PickupContainerItem  = C_Container.PickupContainerItem
+local IsEquippableItem     = C_Item.IsEquippableItem
+local GetItemInfo          = C_Item.GetItemInfo
+
+local CursorCanGoInSlot
+if select(4, GetBuildInfo()) >= 100200 then
+	CursorCanGoInSlot      = C_PaperDollInfo.CanCursorCanGoInSlot
+else
+	CursorCanGoInSlot      = _G.CursorCanGoInSlot
+end
 
 local AEQI = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
 
@@ -105,6 +114,7 @@ function AEQI:QUEST_COMPLETE()
 --	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
 
 	self:Hide()
+	QuestFrameCancelButton:Show()
 
 	if numChoices == 0 and numRewards == 0 then return end -- nothing of value, bail out
 
@@ -112,12 +122,14 @@ function AEQI:QUEST_COMPLETE()
 	if numChoices > 1 then
 		self:SetText(COMPLETE_AND_GET_HIGHEST)
 		self:Show()
+		QuestFrameCancelButton:Hide()
 
 	-- post-5.0 "dynamic reward" quest
 	elseif numChoices == 1 then
 		if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
 			self:SetText(COMPLETE_AND_EQUIP)
 			self:Show()
+			QuestFrameCancelButton:Hide()
 		end
 
 	-- rather rare "multiple guaranteed rewards" quest
@@ -126,6 +138,7 @@ function AEQI:QUEST_COMPLETE()
 			if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
 				self:SetText(COMPLETE_AND_EQUIP)
 				self:Show()
+				QuestFrameCancelButton:Hide()
 
 				break
 			end
@@ -141,7 +154,7 @@ function AEQI:PLAYER_REGEN_ENABLED()
 			local link = GetContainerItemLink(bagID, slot) or ""
 			local itemID = tonumber(link:match("item:(%d+)"))
 
-			if link and itemsToEquip[itemID] then
+			if itemID and itemsToEquip[itemID] then
 				local invSlot = self:GetBestBagSlot(bagID, slot)
 
 				PickupContainerItem(bagID, slot)
