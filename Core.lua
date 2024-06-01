@@ -117,7 +117,7 @@ function AEQI:QUEST_COMPLETE()
 	-- rather rare "multiple guaranteed rewards" quest
 	elseif numRewards > 0 then
 		for i = 1, numRewards do
-			local _, _, _, _, isUsable, itemID = GetQuestItemInfo("reward", QuestInfoFrame.itemChoice)
+			local _, _, _, _, isUsable, itemID = GetQuestItemInfo("reward", i)
 
 			if isUsable and IsEquippableItem(itemID) then
 				self:SetText(COMPLETE_AND_EQUIP)
