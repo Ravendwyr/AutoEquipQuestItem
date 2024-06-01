@@ -1,8 +1,13 @@
 {
     "Lua.diagnostics.globals": [
         "QuestFrameCompleteQuestButton",
+        "QuestFrameCancelButton",
         "QuestFrameRewardPanel",
         "QuestRewardCompleteButton_OnClick",
         "QuestInfoFrame"
+    ],
+    "Lua.diagnostics.disable": [
+        "param-type-mismatch",
+        "undefined-field"
     ]
 }

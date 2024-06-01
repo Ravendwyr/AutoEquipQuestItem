@@ -1,4 +1,6 @@
 
+local isClassic = select(4, GetBuildInfo()) <= 100200
+
 local GetContainerNumSlots = C_Container.GetContainerNumSlots
 local GetContainerItemLink = C_Container.GetContainerItemLink
 local PickupContainerItem  = C_Container.PickupContainerItem
@@ -6,7 +8,7 @@ local IsEquippableItem     = C_Item.IsEquippableItem
 local GetItemInfo          = C_Item.GetItemInfo
 
 local CursorCanGoInSlot
-if select(4, GetBuildInfo()) >= 100200 then
+if isClassic then
 	CursorCanGoInSlot      = C_PaperDollInfo.CanCursorCanGoInSlot
 else
 	CursorCanGoInSlot      = _G.CursorCanGoInSlot
@@ -114,7 +116,7 @@ function AEQI:QUEST_COMPLETE()
 --	print("GetNumQuestRewards():", numRewards, ", GetNumQuestChoices():", numChoices)
 
 	self:Hide()
-	QuestFrameCancelButton:Show()
+	if isClassic then QuestFrameCancelButton:Show() end
 
 	if numChoices == 0 and numRewards == 0 then return end -- nothing of value, bail out
 
@@ -122,14 +124,14 @@ function AEQI:QUEST_COMPLETE()
 	if numChoices > 1 then
 		self:SetText(COMPLETE_AND_GET_HIGHEST)
 		self:Show()
-		QuestFrameCancelButton:Hide()
+		if isClassic then QuestFrameCancelButton:Hide() end
 
 	-- post-5.0 "dynamic reward" quest
 	elseif numChoices == 1 then
 		if select(5, GetQuestItemInfo("choice", 1)) and IsEquippableItem(GetQuestItemLink("choice", 1)) then
 			self:SetText(COMPLETE_AND_EQUIP)
 			self:Show()
-			QuestFrameCancelButton:Hide()
+			if isClassic then QuestFrameCancelButton:Hide() end
 		end
 
 	-- rather rare "multiple guaranteed rewards" quest
@@ -138,7 +140,7 @@ function AEQI:QUEST_COMPLETE()
 			if select(5, GetQuestItemInfo("reward", i)) and IsEquippableItem(GetQuestItemLink("reward", i)) then
 				self:SetText(COMPLETE_AND_EQUIP)
 				self:Show()
-				QuestFrameCancelButton:Hide()
+				if isClassic then QuestFrameCancelButton:Hide() end
 
 				break
 			end
@@ -155,7 +157,10 @@ function AEQI:PLAYER_REGEN_ENABLED()
 			local itemID = tonumber(link:match("item:(%d+)"))
 
 			if itemID and itemsToEquip[itemID] then
-				local invSlot = self:GetBestBagSlot(bagID, slot)
+				local invSlot
+
+				if isClassic then invSlot = self:GetBestBagSlot(bagID, slot)
+				else invSlot = 1 end
 
 				PickupContainerItem(bagID, slot)
 				PickupInventoryItem(invSlot)
