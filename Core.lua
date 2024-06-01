@@ -7,12 +7,6 @@ local PickupContainerItem  = C_Container.PickupContainerItem
 local IsEquippableItem     = C_Item.IsEquippableItem
 local GetItemInfo          = C_Item.GetItemInfo
 
-local CursorCanGoInSlot
-if isClassic then
-	CursorCanGoInSlot      = C_PaperDollInfo.CanCursorCanGoInSlot
-else
-	CursorCanGoInSlot      = _G.CursorCanGoInSlot
-end
 
 local AEQI = CreateFrame("Button", nil, QuestFrameRewardPanel, "UIPanelButtonTemplate")
 
@@ -86,28 +80,6 @@ function QuestInfoItem_OnClick(self, ...)
 end
 
 
-function AEQI:GetBestBagSlot(bagID, slot)
-	local invSlot, invLevel
-
-	PickupContainerItem(bagID, slot)
-
-	for i = 0, 23 do
-		if CursorCanGoInSlot(i) then
-			local level = GetInventoryItemLink("player", i) and select(4, GetItemInfo(GetInventoryItemLink("player", i))) or 0
-
-			if not invSlot or invLevel > level then
-				invSlot = i
-				invLevel = level
-			end
-		end
-	end
-
-	ClearCursor()
-
-	return invSlot
-end
-
-
 -- Event Functions
 function AEQI:QUEST_COMPLETE()
 	local numChoices = GetNumQuestChoices()
@@ -157,13 +129,8 @@ function AEQI:PLAYER_REGEN_ENABLED()
 			local itemID = tonumber(link:match("item:(%d+)"))
 
 			if itemID and itemsToEquip[itemID] then
-				local invSlot
-
-				if isClassic then invSlot = self:GetBestBagSlot(bagID, slot)
-				else invSlot = 1 end
-
 				PickupContainerItem(bagID, slot)
-				PickupInventoryItem(invSlot)
+				PickupInventoryItem(1)
 
 				itemsToEquip[itemID] = nil
 			end
